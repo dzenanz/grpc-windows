@@ -53,6 +53,9 @@ class GreeterServiceImpl final : public Greeter::Service {
                   HelloReply* reply) override {
     std::string prefix("Hello ");
     reply->set_message(prefix + request->name());
+    //reply->set_pixels("Testing the pixels field\0After NULL", 35);
+    if (request->name() == "shit")
+        throw std::runtime_error("Shit has hit the fan!");
     return Status::OK;
   }
 };
@@ -73,11 +76,26 @@ void RunServer() {
 
   // Wait for the server to shutdown. Note that some other thread must be
   // responsible for shutting down the server for this call to ever return.
-  server->Wait();
+  
+  try
+  {
+      server->Wait();
+  }
+  catch (const std::runtime_error & e)
+  {
+      std::cerr << "Inner error:\n" << e.what() << std::endl;
+  }
 }
 
 int main(int argc, char** argv) {
-  RunServer();
+    try
+    {
+        RunServer();
+    }
+    catch (const std::runtime_error & e)
+    {
+        std::cerr << "Outer error:\n" << e.what() << std::endl;
+    }
 
   return 0;
 }

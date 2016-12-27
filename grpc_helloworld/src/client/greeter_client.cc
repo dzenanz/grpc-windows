@@ -70,6 +70,7 @@ class GreeterClient {
 
     // Act upon its status.
     if (status.ok()) {
+      //std::cout << "Pixels: " << reply.pixels() << std::endl;
       return reply.message();
     } else {
       std::cout << status.error_code() << ": " << status.error_message()
@@ -89,9 +90,19 @@ int main(int argc, char** argv) {
   // (use of InsecureChannelCredentials()).
   GreeterClient greeter(grpc::CreateChannel(
       "localhost:50051", grpc::InsecureChannelCredentials()));
-  std::string user("world");
-  std::string reply = greeter.SayHello(user);
-  std::cout << "Greeter received: " << reply << std::endl;
+  //std::string user("world");
+  std::string user;
+  std::cout << "Enter a name: ";
+  std::cin >> user;  
+  try
+  {
+      std::string reply = greeter.SayHello(user);
+      std::cout << "Greeter received: " << reply << std::endl;
+  }
+  catch (const std::runtime_error & e)
+  {
+      std::cerr << "An error occurred:\n" << e.what() << std::endl;
+  }
 
   return 0;
 }
